@@ -34,24 +34,27 @@ final class Character {
         AimingBody = app.loadImage("Assets/Dude.png");
         gunArm = app.loadImage("Assets/gunArm.png");
         crouch = app.loadImage("Assets/crouch.png");
-//        AimingBody.resize(200, 400);
-//        Idle.resize(200, 400);
+        AimingBody.resize(150, 300);
+        gunArm.resize(150, 40);
+        Idle.resize(170, 300);
+        crouch.resize(220, 250);
     }
 
     void draw() {
         app.fill(200);
         if (ducking){
-            app.image(crouch, position.x, position.y);
+            app.image(crouch, position.x, position.y+50);
         } else if (aiming) {
-            float angle = atan2(app.mouseY - (position.y + 110), (app.mouseX + position.x - 500) - (position.x + 190));
-//            System.out.println(angle);
+
+            float angle = atan2(app.mouseY - (position.y + 90), (app.mouseX + position.x - 500) - (position.x + 140));
+
             if (angle < -2 || angle > 1) {
                 app.pushMatrix();
                 app.translate(Idle.width, 0);
                 app.scale(-1, 1);
                 app.image(AimingBody, -position.x, position.y);
                 app.pushMatrix();
-                app.translate(-position.x + 190, position.y + 110);
+                app.translate(-position.x + 140, position.y + 90);
                 app.rotate(-(PI +angle));
                 //app.line(0, 0, app.mouseX + position.x - 500, app.mouseY);
                 app.image(gunArm, 0, -20);
@@ -59,11 +62,10 @@ final class Character {
             } else {
                 app.image(AimingBody, position.x, position.y);
                 app.pushMatrix();
-                app.translate(position.x + 190, position.y + 110);
+                app.translate(position.x + 140, position.y + 90);
                 app.rotate(angle);
                 app.image(gunArm, 0, -20);
             }
-            app.line(position.x + 190, position.y + 100, app.mouseX + position.x - 500, app.mouseY);
             app.popMatrix();
         } else {
             if (orientation == 0) {
@@ -75,7 +77,6 @@ final class Character {
                 app.image(Idle, -position.x, position.y);
                 app.popMatrix();
             }
-
         }
 
         app.fill(0);
@@ -84,13 +85,13 @@ final class Character {
         app.stroke(255);
 
         //CrossHair
-//        app.line(app.mouseX+ position.x - 500 - 20, app.mouseY, app.mouseX+ position.x - 500 - 10, app.mouseY);
-//        app.line(app.mouseX+ position.x - 500 + 20, app.mouseY, app.mouseX+ position.x - 500 + 10, app.mouseY);
-//        app.line(app.mouseX+ position.x - 500, app.mouseY - 20, app.mouseX + position.x - 500, app.mouseY - 10);
-//        app.line(app.mouseX+ position.x - 500, app.mouseY + 20, app.mouseX + position.x - 500, app.mouseY + 10);
+        app.line(app.mouseX+ position.x - 500 - 20, app.mouseY, app.mouseX+ position.x - 500 - 10, app.mouseY);
+        app.line(app.mouseX+ position.x - 500 + 20, app.mouseY, app.mouseX+ position.x - 500 + 10, app.mouseY);
+        app.line(app.mouseX+ position.x - 500, app.mouseY - 20, app.mouseX + position.x - 500, app.mouseY - 10);
+        app.line(app.mouseX+ position.x - 500, app.mouseY + 20, app.mouseX + position.x - 500, app.mouseY + 10);
 
         app.noStroke();
-        if (position.y + 500 >= app.displayHeight) {
+        if (position.y + 320 >= app.displayHeight) {
             onGround = true;
             velocity.y = 0;
         }
@@ -162,7 +163,7 @@ final class Character {
         if (aiming) {
             app.stroke(255, 0, 0);
             app.strokeWeight(4);
-            float angle = atan2(app.mouseY - (position.y + 110), (app.mouseX + position.x - 500) - (position.x + 190));
+            float angle = atan2(app.mouseY - (position.y + 90), (app.mouseX + position.x - 500) - (position.x + 140));
             app.pushMatrix();
             app.translate(-position.x + 500, 0);
             if (angle < -2 || angle > 1) {
@@ -173,10 +174,10 @@ final class Character {
             app.popMatrix();
             app.strokeWeight(1);
 
-            app.line(position.x + 190-position.x + 500, position.y + 100, app.mouseX, app.mouseY);
+            app.line(position.x + 140-position.x + 500, position.y + 90, app.mouseX, app.mouseY);
             //Fire the bullet
             bullets--;
-            Ray hitscanRay = new Ray(new PVector(position.x + 190-position.x + 500, position.y + 100), angle, app);
+            Ray hitscanRay = new Ray(new PVector(position.x + 140-position.x + 500, position.y + 90), angle, app);
             return hitscanRay;
 
         }

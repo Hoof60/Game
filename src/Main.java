@@ -29,7 +29,6 @@ public class Main extends PApplet {
 
     gameState state = gameState.Running;
 
-
     int score;
 
     public void settings() {
@@ -42,7 +41,7 @@ public class Main extends PApplet {
         scoreboardHeight = displayHeight / 25;
         smooth();
         boss = new Boss(this);
-        level1 = new Level1(this);
+        level1 = new Level1(this, player);
     }
 
     public void draw() {
@@ -65,10 +64,10 @@ public class Main extends PApplet {
                 break;
             case Running:
 
+                //boss.draw();
                 pushMatrix();
                 translate(-player.position.x + 500, 0);
                 level1.draw();
-
                 update();
                 drawGraphics();
                 fill(255,0,0);
@@ -85,7 +84,6 @@ public class Main extends PApplet {
         stroke(200);
         strokeWeight(1);
 
-
         player.draw();
         ArrayList<Bullet> toBeRemoved = new ArrayList<>();
 
@@ -96,10 +94,10 @@ public class Main extends PApplet {
             m.draw();
         }
         bullets.removeAll(toBeRemoved);
-        boss.draw();
     }
 
     private void update() {
+        level1.update();
         if (LHELD) {
             player.move(2);
             px += 20;
