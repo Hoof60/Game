@@ -17,17 +17,18 @@ public class Level1 {
     public Level1(PApplet app, Character player) {
         this.app = app;
         enemies = new ArrayList<>();
-        enemies.add(new Robot(500, 300, app));
-        enemies.add(new Robot(5000, 300, app));
-        enemies.add(new Robot(8000, 300, app));
-//        background = app.loadImage("Assets/Level1Background.png");
-        //background.resize(400, 150);
+        enemies.add(new Robot(2000, 100, app));
+        enemies.add(new Robot(5000, 100, app));
+        enemies.add(new Robot(8000, 100, app));
+        background = app.loadImage("Assets/backgrond.png");
+
+        //background.resize(20000, 1080);
         this.player = player;
         player.startLevel(this);
         for (Enemy e: enemies) {
             e.startLevel(this);
         }
-        groundHeight.addAll(Arrays.asList(50,100,100,500,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100, 300,300,300,500,500,500,300,700,300,100,300,500,500,500,500,500));
+        groundHeight.addAll(Arrays.asList(50,100,100,500,450,400,350,300,250,100,100,100,100,100,100,100,100,100,100,100,100, 300,300,300,500,500,500,300,700,300,100,300,500,500,500,500,500));
     }
 
     void update() {
@@ -65,16 +66,14 @@ public class Level1 {
 
 
     void draw() {
-        //app.image(background, 0, 0);
+        app.image(background, 0, 0);
         for (Enemy e : enemies) {
             e.draw();
         }
         for (int i = 0; i < groundHeight.size(); i++) {
             app.rect(i * 300, app.displayHeight - groundHeight.get(i), 290, 1000);
         }
-//        for (Integer i : groundHeight){
-//
-//        }
+
     }
 
 }

@@ -11,6 +11,8 @@ public class Robot extends Enemy {
     PVector position;
     PImage Idle;
     ArrayList<Boundary> hitbox;
+    int height = 500;
+    int width = 200;
     PApplet app;
     PVector velocity = new PVector(0,0);
 
@@ -20,6 +22,7 @@ public class Robot extends Enemy {
         position = new PVector(x, y);
         Idle = app.loadImage("Assets/Robot.png");
         hitbox = new ArrayList<>();
+        velocity = new PVector(-3, 0);
     }
 
     @Override
@@ -62,7 +65,15 @@ public class Robot extends Enemy {
         if (invMass <= 0f) return false;
 
         // update position
-        position.add(velocity);
+        position.y += velocity.y;
+//        System.out.println(position.y+height);
+//        System.out.println(app.displayHeight - level.groundHeight.get((int) (position.x/300) + 1));
+        if ((velocity.x > 0 && (position.x + width -5) % 300 < 10  && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x/300) + 1) ) || (
+                velocity.x < 0 && (position.x -5) % 300 < 10  && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x/300) - 1))){
+            velocity.x = -velocity.x;
+        } else {
+            position.x += velocity.x;
+        }
 
         PVector acceleration = force.get();
         acceleration.mult(invMass);

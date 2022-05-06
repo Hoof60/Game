@@ -1,7 +1,9 @@
+import processing.core.PImage;
 import processing.core.PVector;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Main extends PApplet {
 
@@ -17,6 +19,11 @@ public class Main extends PApplet {
     static final PVector gravity = new PVector(0, 30f);
     Boss boss;
     Level1 level1;
+    PImage UI;
+    PImage fillHeart;
+    PImage emptyHeart;
+    ArrayList<PVector> lives;
+
 
 
     // Stores the current state of the game.
@@ -34,16 +41,25 @@ public class Main extends PApplet {
     public void settings() {
         fullScreen();
         noSmooth();
-
     }
 
     public void setup() {
+//        noSmooth();
+
         bullets = new ArrayList<>();
         player = new Character(this);
         scoreboardHeight = displayHeight / 25;
-        smooth();
         boss = new Boss(this);
         level1 = new Level1(this, player);
+        UI = loadImage("Assets/UI.png");
+        fillHeart = loadImage("Assets/fillHeart.png");
+        noSmooth();
+        fillHeart.resize(50, 50);
+        emptyHeart = loadImage("Assets/emptyHeart.png");
+        lives = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            lives.add(new PVector( 10 + (50*i), 20));
+        }
     }
 
     public void draw() {
@@ -65,16 +81,21 @@ public class Main extends PApplet {
                 text("FINAL SCORE : " + score, displayWidth / 4, (float) (displayHeight / 1.5));
                 break;
             case Running:
-
 //                boss.draw();
+                drawGraphics();
                 pushMatrix();
                 translate(-player.position.x + 500, 0);
                 level1.draw();
+                player.draw();
                 update();
-                drawGraphics();
                 fill(255,0,0);
                 circle(2000,100,50);
                 popMatrix();
+                image(UI, 0,0);
+
+                for (int i = 0; i < 5 ; i++) {
+                    image(fillHeart, lives.get(i).x, lives.get(i).y);
+                }
 
                 break;
         }
@@ -85,17 +106,7 @@ public class Main extends PApplet {
         strokeWeight(0.5f);
         stroke(200);
         strokeWeight(1);
-
-        player.draw();
-//        ArrayList<Bullet> toBeRemoved = new ArrayList<>();
-//
-//        for (Bullet m : bullets) {
-//            if (m.move(gravity)) {
-//                toBeRemoved.add(m);
-//            }
-//            m.draw();
-//        }
-//        bullets.removeAll(toBeRemoved);
+        //rect();
     }
 
     private void update() {
