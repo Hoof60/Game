@@ -16,6 +16,10 @@ public abstract class Enemy {
 
     }
 
+    void startLevel(Level1 l){
+
+    }
+
 
     boolean hitcheck(Character player) {
 

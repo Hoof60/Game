@@ -3,24 +3,31 @@ import processing.core.PImage;
 import processing.core.PVector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Level1 {
 
-    //Robot r;
     ArrayList<Enemy> enemies;
     PImage background;
     PApplet app;
     Character player;
+    ArrayList<Integer> groundHeight = new ArrayList<>();
+
 
     public Level1(PApplet app, Character player) {
         this.app = app;
         enemies = new ArrayList<>();
-        enemies.add(new Robot(2000, 1000, app));
-        enemies.add(new Robot(5000, 1000, app));
-        enemies.add(new Robot(8000, 1000, app));
-        //background = app.loadImage("Assets/Level1Background.png");
+        enemies.add(new Robot(500, 300, app));
+        enemies.add(new Robot(5000, 300, app));
+        enemies.add(new Robot(8000, 300, app));
+//        background = app.loadImage("Assets/Level1Background.png");
         //background.resize(400, 150);
         this.player = player;
+        player.startLevel(this);
+        for (Enemy e: enemies) {
+            e.startLevel(this);
+        }
+        groundHeight.addAll(Arrays.asList(50,100,100,500,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100, 300,300,300,500,500,500,300,700,300,100,300,500,500,500,500,500));
     }
 
     void update() {
@@ -41,7 +48,6 @@ public class Level1 {
             }
         }
         enemies.removeAll(killed);
-
     }
 
     private ArrayList<Boundary> translateHitboxes(ArrayList<Boundary> hitbox) {
@@ -63,6 +69,12 @@ public class Level1 {
         for (Enemy e : enemies) {
             e.draw();
         }
+        for (int i = 0; i < groundHeight.size(); i++) {
+            app.rect(i * 300, app.displayHeight - groundHeight.get(i), 290, 1000);
+        }
+//        for (Integer i : groundHeight){
+//
+//        }
     }
 
 }

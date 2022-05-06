@@ -9,6 +9,7 @@ final class Character {
     PVector position;
     PApplet app;
     PVector velocity;
+    Level1 level;
     private float invMass = 0.05f;
     boolean onGround = true;
     static final PVector gravity = new PVector(0, 20f);
@@ -16,6 +17,8 @@ final class Character {
     static final float moveSpeed = 10;
     private float XAcceleration = 2f;
     boolean aiming = false;
+    int height = 310;
+    int width = 170;
     PImage Idle;
     PImage AimingBody;
     PImage gunArm;
@@ -26,7 +29,7 @@ final class Character {
     int bullets;
 
     Character(PApplet app) {
-        position = new PVector(100, 500);
+        position = new PVector(100, 400);
         bullets = 30;
         this.app = app;
         this.velocity = new PVector(0, 0);
@@ -38,6 +41,10 @@ final class Character {
         gunArm.resize(150, 40);
         Idle.resize(170, 300);
         crouch.resize(220, 250);
+    }
+
+    void startLevel(Level1 l){
+        this.level = l;
     }
 
     void draw() {
@@ -91,7 +98,7 @@ final class Character {
         app.line(app.mouseX+ position.x - 500, app.mouseY + 20, app.mouseX + position.x - 500, app.mouseY + 10);
 
         app.noStroke();
-        if (position.y + 320 >= app.displayHeight) {
+        if (position.y + height +15 + level.groundHeight.get((int) position.x/300) >= app.displayHeight || position.y + height + level.groundHeight.get((int) (position.x+ width)/300 ) >= app.displayHeight) {
             onGround = true;
             velocity.y = 0;
         }
@@ -135,7 +142,22 @@ final class Character {
         if (invMass <= 0f) return false;
 
         // update position
-        position.add(velocity);
+
+        System.out.println(position.y+height);
+        System.out.println(app.displayHeight - level.groundHeight.get((int) (position.x/300) + 1));
+        position.y += velocity.y;
+        if ((velocity.x > 0 && (position.x + width -5) % 300 < 10  && position.y + height >= app.displayHeight - level.groundHeight.get((int) (position.x/300) + 1) )|| (
+                velocity.x < 0 && (position.x -5) % 300 < 10  && position.y + height >= app.displayHeight - level.groundHeight.get((int) (position.x/300) - 1))){
+
+        } else {
+            position.x += velocity.x;
+//            position.add(velocity);
+        }
+//        } else if (velocity.x < 0){
+//            if (position.y + height > level.groundHeight.get((int) position.x/300 )){
+//                position.add(velocity);
+//            }
+//        }
 
         PVector acceleration = force.get();
         acceleration.mult(invMass);

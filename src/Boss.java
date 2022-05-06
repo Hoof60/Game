@@ -14,7 +14,7 @@ public class Boss {
     public Boss(PApplet app) {
         this.app = app;
         calling = true;
-        //speaking = true;
+        speaking = true;
         face1 = app.loadImage("Assets/Boss1.png");
         face2 = app.loadImage("Assets/boss2.png");
         face1.resize(200, 200);

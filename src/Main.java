@@ -33,6 +33,8 @@ public class Main extends PApplet {
 
     public void settings() {
         fullScreen();
+        noSmooth();
+
     }
 
     public void setup() {
@@ -64,7 +66,7 @@ public class Main extends PApplet {
                 break;
             case Running:
 
-                //boss.draw();
+//                boss.draw();
                 pushMatrix();
                 translate(-player.position.x + 500, 0);
                 level1.draw();
@@ -85,15 +87,15 @@ public class Main extends PApplet {
         strokeWeight(1);
 
         player.draw();
-        ArrayList<Bullet> toBeRemoved = new ArrayList<>();
-
-        for (Bullet m : bullets) {
-            if (m.move(gravity)) {
-                toBeRemoved.add(m);
-            }
-            m.draw();
-        }
-        bullets.removeAll(toBeRemoved);
+//        ArrayList<Bullet> toBeRemoved = new ArrayList<>();
+//
+//        for (Bullet m : bullets) {
+//            if (m.move(gravity)) {
+//                toBeRemoved.add(m);
+//            }
+//            m.draw();
+//        }
+//        bullets.removeAll(toBeRemoved);
     }
 
     private void update() {
