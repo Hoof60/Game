@@ -1,7 +1,11 @@
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
+
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static processing.core.PApplet.atan2;
 
 public class Robot extends Enemy {
 
@@ -14,33 +18,49 @@ public class Robot extends Enemy {
     int height = 500;
     int width = 200;
     PApplet app;
-    PVector velocity = new PVector(0,0);
+    PVector velocity = new PVector(0, 0);
+    int health = 3;
+    int fireCounter;
+    boolean seesPlayer;
 
 
-    public Robot(int x, int y, PApplet app){
+    public Robot(int x, int y, PApplet app) {
         this.app = app;
         position = new PVector(x, y);
         Idle = app.loadImage("Assets/Robot.png");
+        Idle.resize(200, 500);
         hitbox = new ArrayList<>();
         velocity = new PVector(-3, 0);
     }
 
     @Override
-    void startLevel(Level1 l){
+    void startLevel(Level1 l) {
         this.level = l;
     }
 
     @Override
-    ArrayList<Boundary> getHitbox(){
+    ArrayList<Boundary> getHitbox() {
         ArrayList<Boundary> translated = new ArrayList<>();
-        translated.add(new Boundary(position.x + 50, position.y + 50, position.x+50, position.y + 100, app));
+        translated.add(new Boundary(position.x + 50, position.y + 50, position.x + 50, position.y + 100, app));
         return translated;
     }
 
     @Override
     boolean hitcheck(Character player) {
-        if (position.x < player.position.x + 100 && position.x > player.position.x){
-            System.out.println("true");
+        if (position.x < player.position.x + 100 && position.x > player.position.x && position.y > player.position.y && position.y < player.position.y + player.height) {
+            return true;
+        }
+        return false;
+    }
+
+    boolean damage(){
+        health--;
+        app.fill(255,0,0);
+        app.pushMatrix();
+        app.translate(-level.player.position.x + 500, 0);
+        app.rect(position.x, position.y, width, height);
+        app.popMatrix();
+        if (health == 0) {
             return true;
         }
         return false;
@@ -48,11 +68,19 @@ public class Robot extends Enemy {
 
     @Override
     void update() {
-        if (position.y + 510 + level.groundHeight.get((int) position.x/300 ) >= app.displayHeight) {
+        if (position.x - level.player.position.x < 1000){
+            seesPlayer = true;
+        } else {
+            seesPlayer = false;
+        }
+        if (position.y + 510 + level.groundHeight.get((int) position.x / 300) >= app.displayHeight) {
             velocity.y = 0;
         }
+        if (ThreadLocalRandom.current().nextInt(0, 50) == 0 && seesPlayer) {
+            fireLaser(level.player);
+        } else {
             integrate(gravity);
-        //position.x -= 5;
+        }
     }
 
     @Override
@@ -66,10 +94,8 @@ public class Robot extends Enemy {
 
         // update position
         position.y += velocity.y;
-//        System.out.println(position.y+height);
-//        System.out.println(app.displayHeight - level.groundHeight.get((int) (position.x/300) + 1));
-        if ((velocity.x > 0 && (position.x + width -5) % 300 < 10  && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x/300) + 1) ) || (
-                velocity.x < 0 && (position.x -5) % 300 < 10  && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x/300) - 1))){
+        if ((velocity.x > 0 && (position.x + width - 5) % 300 < 10 && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x / 300) + 1)) || (
+                velocity.x < 0 && (position.x - 5) % 300 < 10 && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x / 300) - 1))) {
             velocity.x = -velocity.x;
         } else {
             position.x += velocity.x;
@@ -89,6 +115,13 @@ public class Robot extends Enemy {
         return false;
     }
 
+    void fireLaser(Character p) {
+        PVector dir = new PVector(p.position.x + 50 - (position.x), (p.position.y + 50 - position.y));
+        level.makeEnemy(new Laser(position.get(), dir.get(), app));
+    }
 
-
+    @Override
+    public PVector getPosition() {
+        return position;
+    }
 }

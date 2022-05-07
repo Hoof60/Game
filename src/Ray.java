@@ -34,8 +34,8 @@ class Ray {
 
     //, PVector target
     PVector cast(Boundary wall) {
-        wall.show();
-        show();
+        //wall.show();
+        //show();
 
         float x1 = wall.a.x;
         float y1 = wall.a.y;

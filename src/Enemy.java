@@ -1,3 +1,5 @@
+import processing.core.PVector;
+
 import java.util.ArrayList;
 
 public abstract class Enemy {
@@ -15,11 +17,19 @@ public abstract class Enemy {
     void update() {
 
     }
+    boolean damage(){
+
+        return true;
+    }
 
     void startLevel(Level1 l){
 
     }
 
+    PVector getPosition(){
+
+        return null;
+    }
 
     boolean hitcheck(Character player) {
 

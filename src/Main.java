@@ -25,10 +25,9 @@ public class Main extends PApplet {
     ArrayList<PVector> lives;
 
 
-
     // Stores the current state of the game.
     enum gameState {
-        //MainMenu,
+        MainMenu,
         Running,
         Paused,
         GameOver
@@ -52,26 +51,29 @@ public class Main extends PApplet {
         boss = new Boss(this);
         level1 = new Level1(this, player);
         UI = loadImage("Assets/UI.png");
-        fillHeart = loadImage("Assets/fillHeart.png");
         noSmooth();
-        fillHeart.resize(50, 50);
+
+        fillHeart = loadImage("Assets/fillHeart.png");
         emptyHeart = loadImage("Assets/emptyHeart.png");
+        fillHeart.resize(50, 50);
+        emptyHeart.resize(50, 50);
         lives = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            lives.add(new PVector( 10 + (50*i), 20));
+            lives.add(new PVector(10 + (50 * i), 20));
         }
     }
 
     public void draw() {
 
         background(60);
-        noStroke();
         rect(0, 0, displayWidth, scoreboardHeight);
         textSize(42);
         text("SCORE: " + score, 0, displayHeight / 30);
         fill(255);
 
         switch (state) {
+            case MainMenu:
+                background(100);
             case Paused:
                 text("PAUSED", displayWidth / 4, displayHeight / 2);
                 break;
@@ -88,15 +90,17 @@ public class Main extends PApplet {
                 level1.draw();
                 player.draw();
                 update();
-                fill(255,0,0);
-                circle(2000,100,50);
+                fill(255, 0, 0);
                 popMatrix();
-                image(UI, 0,0);
+                image(UI, 0, 0);
 
-                for (int i = 0; i < 5 ; i++) {
-                    image(fillHeart, lives.get(i).x, lives.get(i).y);
+                for (int i = 0; i < 5; i++) {
+                    if (player.health > i) {
+                        image(fillHeart, lives.get(i).x, lives.get(i).y);
+                    } else {
+                        image(emptyHeart, lives.get(i).x, lives.get(i).y);
+                    }
                 }
-
                 break;
         }
     }
@@ -106,7 +110,6 @@ public class Main extends PApplet {
         strokeWeight(0.5f);
         stroke(200);
         strokeWeight(1);
-        //rect();
     }
 
     private void update() {
@@ -145,16 +148,16 @@ public class Main extends PApplet {
 
 
     public void keyReleased() {
-        switch (key){
-            case 'd':{
+        switch (key) {
+            case 'd': {
                 RHELD = false;
                 break;
             }
-            case 'a':{
+            case 'a': {
                 LHELD = false;
                 break;
             }
-            case 's':{
+            case 's': {
                 player.duck(false);
                 break;
             }
@@ -167,19 +170,20 @@ public class Main extends PApplet {
         if (state == gameState.Running & mouseButton == LEFT) {
             PVector pos = player.position.get();
             Ray bullet = player.fire();
-            if (bullet != null){
+            if (bullet != null) {
                 level1.hitCheck(bullet);
             }
 
             //v = new PVector(mouseX - pos.x, (mouseY - pos.y) * 1.1f);
             //bullets.add(new Bullet(pos, v, .011f, this));
-        } if (state == gameState.Running & mouseButton == RIGHT){
+        }
+        if (state == gameState.Running & mouseButton == RIGHT) {
             player.aiming = true;
         }
     }
 
-    public void mouseReleased(){
-        if (state == gameState.Running & mouseButton == RIGHT){
+    public void mouseReleased() {
+        if (state == gameState.Running & mouseButton == RIGHT) {
             player.aiming = false;
         }
     }

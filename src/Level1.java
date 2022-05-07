@@ -12,7 +12,8 @@ public class Level1 {
     PApplet app;
     Character player;
     ArrayList<Integer> groundHeight = new ArrayList<>();
-
+    ArrayList<Enemy> created = new ArrayList<>();
+    ArrayList<Boundary> bounds;
 
     public Level1(PApplet app, Character player) {
         this.app = app;
@@ -25,27 +26,64 @@ public class Level1 {
         //background.resize(20000, 1080);
         this.player = player;
         player.startLevel(this);
-        for (Enemy e: enemies) {
+        for (Enemy e : enemies) {
             e.startLevel(this);
         }
-        groundHeight.addAll(Arrays.asList(50,100,100,500,450,400,350,300,250,100,100,100,100,100,100,100,100,100,100,100,100, 300,300,300,500,500,500,300,700,300,100,300,500,500,500,500,500));
+        groundHeight.addAll(Arrays.asList(2000, 100, 100, 100, 400, 500, 100, 100, 100, 100, 100, 100, 100, 300, 400, 500, 100, 100, 100, 100, 100, 300, 300, 300, 500, 500, 500, 300, 700, 300, 100, 300, 500, 500, 500, 500, 2000));
+        bounds = new ArrayList<>();
+        for (int i = 0; i < groundHeight.size(); i++) {
+            bounds.add(new Boundary(300 * i, app.displayHeight, 300 * i, app.displayHeight - groundHeight.get(i), app));
+            bounds.add(new Boundary(300 * i, app.displayHeight - groundHeight.get(i), 300 * i + 300, app.displayHeight - groundHeight.get(i), app));
+            bounds.add(new Boundary(300 * i + 300, app.displayHeight - groundHeight.get(i), 300 * i + 300, app.displayHeight, app));
+        }
+
     }
 
     void update() {
-        for(Enemy e: enemies){
+        ArrayList<Enemy> killed = new ArrayList<>();
+        for (Enemy e : enemies) {
             e.update();
-            e.hitcheck(player);
+            if (e.hitcheck(player)) {
+                killed.add(e);
+                player.getHit();
+            }
         }
+        enemies.removeAll(killed);
+        enemies.addAll(created);
+        created.clear();
     }
 
     public void hitCheck(Ray hitscanRay) {
         //Check if player bullet hits enemies
-
         ArrayList<Enemy> killed = new ArrayList<>();
+        ArrayList<PVector> hit = new ArrayList<>();
+
         for (Enemy e : enemies) {
             ArrayList<Boundary> hitboxes = translateHitboxes(e.getHitbox());
             if (hitscanRay.cast(hitboxes.get(0)) != null) {
-                killed.add(e);
+                ArrayList<Boundary> walls = translateHitboxes(bounds);
+                for (Boundary b : walls) {
+                    PVector point;
+                    if ((point = hitscanRay.cast(b)) != null) {
+                        hit.add(point);
+                    }
+                }
+                if (hit.size() > 0) {
+                    boolean hitWall = false;
+                    for (PVector p : hit) {
+                        app.fill(255, 0, 0);
+                        app.circle(p.x, p.y, 10);
+                        if (p.x < e.getPosition().x + 100) {
+                            hitWall = true;
+                            break;
+                        }
+                    }
+                    if (!hitWall) {
+                        if (e.damage()) {
+                            killed.add(e);
+                        }
+                    }
+                }
             }
         }
         enemies.removeAll(killed);
@@ -66,14 +104,22 @@ public class Level1 {
 
 
     void draw() {
-        app.image(background, 0, 0);
+        //app.image(background, 0, 0);
         for (Enemy e : enemies) {
             e.draw();
         }
+        app.fill(200);
         for (int i = 0; i < groundHeight.size(); i++) {
-            app.rect(i * 300, app.displayHeight - groundHeight.get(i), 290, 1000);
+            app.rect(i * 300, app.displayHeight - groundHeight.get(i), 300, 3000);
+        }
+        for (Boundary b : bounds) {
+            b.show();
         }
 
+    }
+
+    void makeEnemy(Enemy e) {
+        created.add(e);
     }
 
 }
