@@ -47,7 +47,7 @@ public class Robot extends Enemy {
 
     @Override
     boolean hitcheck(Character player) {
-        if (position.x < player.position.x + 100 && position.x > player.position.x && position.y > player.position.y && position.y < player.position.y + player.height) {
+        if (position.x < player.position.x + 100 && position.x > player.position.x && position.y < player.position.y && position.y < player.position.y + player.height) {
             return true;
         }
         return false;
@@ -86,6 +86,7 @@ public class Robot extends Enemy {
     @Override
     void draw() {
         app.image(Idle, position.x, position.y);
+        getHitbox().get(0).show();
     }
 
     boolean integrate(PVector force) {
@@ -117,7 +118,7 @@ public class Robot extends Enemy {
 
     void fireLaser(Character p) {
         PVector dir = new PVector(p.position.x + 50 - (position.x), (p.position.y + 50 - position.y));
-        level.makeEnemy(new Laser(position.get(), dir.get(), app));
+        //level.makeEnemy(new Laser(position.get(), dir.get(), app));
     }
 
     @Override

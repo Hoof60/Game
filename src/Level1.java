@@ -58,10 +58,29 @@ public class Level1 {
         ArrayList<Enemy> killed = new ArrayList<>();
         ArrayList<PVector> hit = new ArrayList<>();
 
+        ArrayList<Boundary> walls = translateHitboxes(bounds);
+        for (Boundary b : walls) {
+            PVector point;
+            if ((point = hitscanRay.cast(b)) != null) {
+                hit.add(point);
+            }
+        }
+        if (hit.size() > 0) {
+            boolean hitWall = false;
+            for (PVector p : hit) {
+                app.fill(255, 0, 0);
+                app.circle(p.x, p.y, 10);
+//                if (p.x < e.getPosition().x + 100) {
+//                    hitWall = true;
+//                    break;
+//                }
+            }
+        }
+
         for (Enemy e : enemies) {
             ArrayList<Boundary> hitboxes = translateHitboxes(e.getHitbox());
             if (hitscanRay.cast(hitboxes.get(0)) != null) {
-                ArrayList<Boundary> walls = translateHitboxes(bounds);
+                 walls = translateHitboxes(bounds);
                 for (Boundary b : walls) {
                     PVector point;
                     if ((point = hitscanRay.cast(b)) != null) {

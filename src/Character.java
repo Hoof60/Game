@@ -136,7 +136,7 @@ final class Character {
         app.line(app.mouseX + position.x - 500, app.mouseY + 20, app.mouseX + position.x - 500, app.mouseY + 10);
 
         app.noStroke();
-        if (position.y + height + 15 + level.groundHeight.get((int) position.x / 300) >= app.displayHeight || position.y + height + level.groundHeight.get((int) (position.x + width - 15) / 300) >= app.displayHeight) {
+        if (position.y + height + 25 + level.groundHeight.get((int) position.x / 300) >= app.displayHeight || position.y + height + level.groundHeight.get((int) (position.x + width - 15) / 300) >= app.displayHeight) {
             onGround = true;
             velocity.y = 0;
         }
