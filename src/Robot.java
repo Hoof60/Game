@@ -5,13 +5,11 @@ import processing.core.PVector;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static processing.core.PApplet.atan2;
-
 public class Robot extends Enemy {
 
     private float invMass = 0.1f;
     static final PVector gravity = new PVector(0, 20f);
-    Level1 level;
+    LevelManager level;
     PVector position;
     PImage Idle;
     ArrayList<Boundary> hitbox;
@@ -34,7 +32,7 @@ public class Robot extends Enemy {
     }
 
     @Override
-    void startLevel(Level1 l) {
+    void startLevel(LevelManager l) {
         this.level = l;
     }
 
@@ -118,11 +116,12 @@ public class Robot extends Enemy {
 
     void fireLaser(Character p) {
         PVector dir = new PVector(p.position.x + 50 - (position.x), (p.position.y + 50 - position.y));
-        //level.makeEnemy(new Laser(position.get(), dir.get(), app));
+        level.makeEnemy(new Laser(new PVector(position.x + 50, position.y + 80), dir.get(), app));
     }
 
     @Override
     public PVector getPosition() {
+
         return position;
     }
 }

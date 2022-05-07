@@ -22,7 +22,7 @@ public abstract class Enemy {
         return true;
     }
 
-    void startLevel(Level1 l){
+    void startLevel(LevelManager l){
 
     }
 
@@ -32,6 +32,11 @@ public abstract class Enemy {
     }
 
     boolean hitcheck(Character player) {
+
+        return false;
+    }
+
+    boolean checkCollision(){
 
         return false;
     }

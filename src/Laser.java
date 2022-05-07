@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Laser extends Enemy {
     PVector position;
     PVector movementDir;
+    LevelManager level;
     PApplet app;
     float moveSpeed = 0.04f;
 
@@ -13,6 +14,20 @@ public class Laser extends Enemy {
         this.position = position;
         this.movementDir = movementDir.get();
         this.app = app;
+    }
+    @Override
+    boolean checkCollision(){
+        if (position.x/300 < 0 || position.x/300 > level.groundHeight.size()){
+            return true;
+        }
+        if (position.y > app.displayHeight - level.groundHeight.get((int) position.x/300)){
+            return true;
+        }
+        return false;
+    }
+
+    void startLevel(LevelManager l){
+        this.level = l;
     }
 
     @Override

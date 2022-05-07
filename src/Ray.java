@@ -34,8 +34,8 @@ class Ray {
 
     //, PVector target
     PVector cast(Boundary wall) {
-        //wall.show();
-        //show();
+        wall.show();
+        show();
 
         float x1 = wall.a.x;
         float y1 = wall.a.y;
@@ -55,39 +55,13 @@ class Ray {
         float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
         float u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
 
-//        double distanceToTarget = Math.sqrt(Math.pow(x3 - target.x,2) + Math.pow(y3 - target.y,2));
         if (t > 0 && t < 1 && u > 0) {
 
             PVector pt = new PVector();
             pt.x = x1 + t * (x2 - x1);
             pt.y = y1 + t * (y2 - y1);
 
-//            boolean behindPlayer = false;
-//
-//            if(x3 > target.x){ // target is to the left
-//                if (pt.x < target.x){
-//                    behindPlayer = true;
-//                }
-//            }
-//            if(x3 <= target.x){ // target is to the right
-//                if (pt.x > target.x){
-//                    behindPlayer = true;
-//                }
-//            }
-//            if(y3 > target.y){ // target is above
-//                if (pt.y < target.y){
-//                    behindPlayer = true;
-//                }
-//            }
-//            if(y3 <= target.y){ // target is below
-//                if (pt.y > target.y){
-//                    behindPlayer = true;
-//                }
-//            }
-            // Adjust ray collision appropriately.
-//            if (!behindPlayer) {
                 return pt;
-//            }
         }
 
 

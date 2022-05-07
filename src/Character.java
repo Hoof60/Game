@@ -10,7 +10,7 @@ final class Character {
     PVector position;
     PApplet app;
     PVector velocity;
-    Level1 level;
+    LevelManager level;
     private float invMass = 0.05f;
     boolean onGround = true;
     static final PVector gravity = new PVector(0, 20f);
@@ -32,12 +32,13 @@ final class Character {
     int health;
     int runCounter = 0;
     boolean runSwitch = false;
+    boolean Reloading = false;
+    int reloadTimer = 0;
 
-    int bullets;
+    int bullets = 5;
 
     Character(PApplet app) {
         position = new PVector(400, 400);
-        bullets = 30;
         this.app = app;
         this.velocity = new PVector(0, 0);
         Idle = app.loadImage("Assets/Idle.png");
@@ -45,8 +46,8 @@ final class Character {
         gunArm = app.loadImage("Assets/gunArm.png");
         crouch = app.loadImage("Assets/crouch.png");
         crouchShoot = app.loadImage("Assets/crouchShoot.png");
-        run1 = app.loadImage("Assets/Idle.png");
-        run2 = app.loadImage("Assets/Idle.png");
+        run1 = app.loadImage("Assets/run1.png");
+        run2 = app.loadImage("Assets/run2.png");
         run1.resize(220, 280);
         run2.resize(220, 280);
         AimingBody.resize(150, 300);
@@ -54,15 +55,28 @@ final class Character {
         Idle.resize(170, 300);
         crouch.resize(220, 250);
         crouchShoot.resize(220, 250);
-
         health = 5;
     }
 
-    void startLevel(Level1 l) {
+    void startLevel(LevelManager l) {
         this.level = l;
     }
 
+    void update(){
+        if (Reloading){
+            if (reloadTimer == 0){
+                bullets = 5;
+                Reloading = false;
+            }
+            else {
+                reloadTimer--;
+            }
+        }
+    }
+
     void draw() {
+
+        update();
         app.fill(200);
         if (ducking && aiming) {
             float angle = atan2(app.mouseY - (position.y + 200), (app.mouseX - 650));
@@ -224,35 +238,37 @@ final class Character {
 
     // Reduces the number of available missiles.
     Ray fire() {
-        if (aiming) {
-            app.stroke(255, 0, 0);
-            app.strokeWeight(4);
-            float angle = atan2(app.mouseY - (position.y + 200), (app.mouseX - 650));
-            app.pushMatrix();
-            app.translate(-position.x + 500, 0);
-            app.popMatrix();
-            app.strokeWeight(1);
-            Ray hitscanRay;
+        if (bullets > 0 && !Reloading) {
+            if (aiming) {
+                app.stroke(255, 0, 0);
+                app.strokeWeight(4);
+                app.pushMatrix();
+                app.translate(-position.x + 500, 0);
+                app.popMatrix();
+                app.strokeWeight(1);
+                Ray hitscanRay;
 
-            if (ducking) {
-                app.line(650, position.y + 200, app.mouseX, app.mouseY);
-                hitscanRay = new Ray(new PVector(650, position.y + 200), angle, app);
+                if (ducking) {
+                    float angle = atan2(app.mouseY - (position.y + 200), (app.mouseX - 650));
+                    app.line(650, position.y + 200, app.mouseX, app.mouseY);
+                    hitscanRay = new Ray(new PVector(650, position.y + 200), angle, app);
+                } else {
+                    float angle = atan2(app.mouseY - (position.y + 90), (app.mouseX - 640));
+                    if (angle < -2 || angle > 1) {
+                        app.line(525, position.y + 90, app.mouseX, app.mouseY);
+                        hitscanRay = new Ray(new PVector(520, position.y + 90), angle, app);
+                    } else {
+                        app.line(640, position.y + 90, app.mouseX, app.mouseY);
+                        hitscanRay = new Ray(new PVector(640, position.y + 90), angle, app);
+                    }
+                }
+
+                //Fire the bullet
+                bullets--;
+                return hitscanRay;
+
             }
-            else if (angle < -2 || angle > 1) {
-                app.line(525, position.y + 90, app.mouseX, app.mouseY);
-                hitscanRay = new Ray(new PVector(520, position.y + 90), angle, app);
-            } else {
-                app.line(640, position.y + 90, app.mouseX, app.mouseY);
-                hitscanRay = new Ray(new PVector(640, position.y + 90), angle, app);
-            }
-
-
-            //Fire the bullet
-            bullets--;
-            return hitscanRay;
-
         }
-
         return null;
     }
 
@@ -269,5 +285,10 @@ final class Character {
         } else {
             ducking = false;
         }
+    }
+
+    public void reload() {
+        Reloading = true;
+        reloadTimer = 150;
     }
 }
