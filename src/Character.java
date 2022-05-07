@@ -2,6 +2,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
+import static java.lang.Math.max;
 import static processing.core.PApplet.atan2;
 import static processing.core.PConstants.PI;
 
@@ -23,6 +24,7 @@ final class Character {
     PImage AimingBody;
     PImage gunArm;
     PImage crouch;
+    PImage crouchShoot;
     PImage run1;
     PImage run2;
     Float orientation = 0f;
@@ -42,14 +44,16 @@ final class Character {
         AimingBody = app.loadImage("Assets/Dude.png");
         gunArm = app.loadImage("Assets/gunArm.png");
         crouch = app.loadImage("Assets/crouch.png");
-        run1 = app.loadImage("Assets/run1.png");
-        run2 = app.loadImage("Assets/run2.png");
+        crouchShoot = app.loadImage("Assets/crouchShoot.png");
+        run1 = app.loadImage("Assets/Idle.png");
+        run2 = app.loadImage("Assets/Idle.png");
         run1.resize(220, 280);
         run2.resize(220, 280);
         AimingBody.resize(150, 300);
         gunArm.resize(150, 40);
         Idle.resize(170, 300);
         crouch.resize(220, 250);
+        crouchShoot.resize(220, 250);
 
         health = 5;
     }
@@ -60,7 +64,17 @@ final class Character {
 
     void draw() {
         app.fill(200);
-        if (ducking) {
+        if (ducking && aiming) {
+            float angle = atan2(app.mouseY - (position.y + 200), (app.mouseX - 650));
+            app.pushMatrix();
+            app.translate(position.x + 140, position.y + 200);
+            angle = (float) max(angle, -0.5f);
+            app.rotate(angle);
+            app.image(gunArm, 0, -20);
+            app.popMatrix();
+            app.image(crouchShoot, position.x, position.y + 50);
+
+        } else if (ducking) {
             app.image(crouch, position.x, position.y + 50);
         } else if (onGround && (velocity.x > 6 || velocity.x < -6)) {
             if (runCounter == 0) {
@@ -213,30 +227,39 @@ final class Character {
         if (aiming) {
             app.stroke(255, 0, 0);
             app.strokeWeight(4);
-            float angle = atan2(app.mouseY - (position.y + 90), (app.mouseX + position.x - 500) - (position.x + 140));
+            float angle = atan2(app.mouseY - (position.y + 200), (app.mouseX - 650));
             app.pushMatrix();
             app.translate(-position.x + 500, 0);
-//            if (angle < -2 || angle > 1) {
-//                //app.line(position.x + 30, position.y + 100, app.mouseX + position.x - 500, app.mouseY);
-//            } else {
-//                //app.line(position.x + 190, position.y + 100, app.mouseX + position.x - 500, app.mouseY);
-//            }
             app.popMatrix();
             app.strokeWeight(1);
+            Ray hitscanRay;
 
-            app.line(position.x + 140 - position.x + 500, position.y + 90, app.mouseX, app.mouseY);
+            if (ducking) {
+                app.line(650, position.y + 200, app.mouseX, app.mouseY);
+                hitscanRay = new Ray(new PVector(650, position.y + 200), angle, app);
+            }
+            else if (angle < -2 || angle > 1) {
+                app.line(525, position.y + 90, app.mouseX, app.mouseY);
+                hitscanRay = new Ray(new PVector(520, position.y + 90), angle, app);
+            } else {
+                app.line(640, position.y + 90, app.mouseX, app.mouseY);
+                hitscanRay = new Ray(new PVector(640, position.y + 90), angle, app);
+            }
+
+
             //Fire the bullet
             bullets--;
-            Ray hitscanRay = new Ray(new PVector(position.x + 140 - position.x + 500, position.y + 90), angle, app);
             return hitscanRay;
+
         }
+
         return null;
     }
 
     void getHit() {
         health--;
         velocity.x += -10;
-        app.fill(255,0,0);
+        app.fill(255, 0, 0);
         app.rect(position.x, position.y, width, height);
     }
 
