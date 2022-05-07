@@ -66,7 +66,7 @@ public class Robot extends Enemy {
 
     @Override
     void update() {
-        if (position.x - level.player.position.x < 1000){
+        if (position.x - level.player.position.x < 1500){
             seesPlayer = true;
         } else {
             seesPlayer = false;
@@ -84,7 +84,6 @@ public class Robot extends Enemy {
     @Override
     void draw() {
         app.image(Idle, position.x, position.y);
-        getHitbox().get(0).show();
     }
 
     boolean integrate(PVector force) {

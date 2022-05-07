@@ -15,8 +15,8 @@ final class Character {
     boolean onGround = true;
     static final PVector gravity = new PVector(0, 20f);
     static final float xDrag = 0.5f;
-    static final float moveSpeed = 10;
-    private float XAcceleration = 2f;
+    static final float moveSpeed = 15;
+    private float XAcceleration = 3f;
     boolean aiming = false;
     int height = 300;
     int width = 170;
@@ -27,6 +27,7 @@ final class Character {
     PImage crouchShoot;
     PImage run1;
     PImage run2;
+    PImage falling;
     Float orientation = 0f;
     boolean ducking;
     int health;
@@ -48,6 +49,8 @@ final class Character {
         crouchShoot = app.loadImage("Assets/crouchShoot.png");
         run1 = app.loadImage("Assets/run1.png");
         run2 = app.loadImage("Assets/run2.png");
+        falling = app.loadImage("Assets/Falling.png");
+        falling.resize(210, 310);
         run1.resize(220, 280);
         run2.resize(220, 280);
         AimingBody.resize(150, 300);
@@ -62,20 +65,18 @@ final class Character {
         this.level = l;
     }
 
-    void update(){
-        if (Reloading){
-            if (reloadTimer == 0){
+    void update() {
+        if (Reloading) {
+            if (reloadTimer == 0) {
                 bullets = 5;
                 Reloading = false;
-            }
-            else {
+            } else {
                 reloadTimer--;
             }
         }
     }
 
     void draw() {
-
         update();
         app.fill(200);
         if (ducking && aiming) {
@@ -90,6 +91,8 @@ final class Character {
 
         } else if (ducking) {
             app.image(crouch, position.x, position.y + 50);
+        } else if (velocity.y > 0.5 && !onGround){
+            app.image(falling, position.x, position.y);
         } else if (onGround && (velocity.x > 6 || velocity.x < -6)) {
             if (runCounter == 0) {
                 runSwitch = !runSwitch;
@@ -164,7 +167,12 @@ final class Character {
         app.line(app.mouseX + position.x - 500, app.mouseY + 20, app.mouseX + position.x - 500, app.mouseY + 10);
 
         app.noStroke();
-        if (position.y + height + 25 + level.groundHeight.get((int) position.x / 300) >= app.displayHeight || position.y + height + level.groundHeight.get((int) (position.x + width - 15) / 300) >= app.displayHeight) {
+        if (position.y + height + level.groundHeight.get((int) position.x / 300) >= app.displayHeight) {
+            position.y = app.displayHeight - level.groundHeight.get((int) position.x / 300) - height;
+            onGround = true;
+            velocity.y = 0;
+        } else if (position.y + height + level.groundHeight.get((int) (position.x + width) / 300) >= app.displayHeight) {
+            position.y = app.displayHeight - level.groundHeight.get((int) (position.x + width) / 300) - height;
             onGround = true;
             velocity.y = 0;
         }
@@ -209,8 +217,9 @@ final class Character {
 
         // update position
         position.y += velocity.y;
-        if ((velocity.x > 0 && (position.x + width - 5) % 300 < 10 && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x / 300) + 1)) || (
-                velocity.x < 0 && (position.x - 5) % 300 < 10 && position.y + height - 10 >= app.displayHeight - level.groundHeight.get((int) (position.x / 300) - 1))) {
+
+        if ((velocity.x > 0 && ((position.x + width) / 300) > ((position.x) / 300) && (int) (position.y + height) > app.displayHeight - level.groundHeight.get((int) (position.x + width + 16) / 300))) {
+        } else if ((velocity.x < 0 && ((position.x + width) / 300) > ((position.x - 16) / 300) && (int) (position.y + height) > app.displayHeight - level.groundHeight.get((int) (position.x - 16) / 300))) {
         } else {
             position.x += velocity.x;
         }
@@ -289,6 +298,6 @@ final class Character {
 
     public void reload() {
         Reloading = true;
-        reloadTimer = 150;
+        reloadTimer = 100;
     }
 }

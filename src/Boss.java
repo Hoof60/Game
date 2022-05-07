@@ -99,14 +99,15 @@ public class Boss {
                 introDone = true;
             }
         }
-        if (killedCEO){
+        if (introTextNum != 0){
+            app.textSize(20);
+            app.text("[SPACEBAR] to continue", textx, texty+50);
+        } else  if (killedCEO){
             app.text("Nice job, that guy was beginning to get on my nerves.", textx, texty);
-
-        }
-
-        if (playerDead) {
+        } else if (playerDead) {
             app.text("I thought he said that he was good at this on his CV.", textx, texty);
         }
+
 
     }
 

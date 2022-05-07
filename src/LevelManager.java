@@ -9,6 +9,7 @@ public class LevelManager {
 
     ArrayList<Enemy> enemies;
     PImage background;
+    PImage wall;
     PApplet app;
     Character player;
     ArrayList<Integer> groundHeight = new ArrayList<>();
@@ -20,7 +21,6 @@ public class LevelManager {
 
     public LevelManager(PApplet app, Character player) {
         this.app = app;
-
         enemies = new ArrayList<>();
 
         switch (Levelnum){
@@ -31,9 +31,10 @@ public class LevelManager {
                 enemies.add(new Robot(6500, 100, app));
                 enemies.add(new Robot(8000, 100, app));
 
-                enemies.add(new CEO(new PVector(10500, 320), app));
+                enemies.add(new CEO(new PVector(10500, app.displayHeight - 450), app));
                 background = app.loadImage("Assets/backgrond.png");
-                groundHeight.addAll(Arrays.asList(2000, 100, 100, 100, 150, 500, 100, 100, 100, 100, 100, 100, 100, 300, 400, 500, 100, 100, 100, 100, 100, 300, 300, 300, 500, 500, 500, 300, 700, 500, 800, 1000, 500, 500, 500, 500, 2000));
+                wall = app.loadImage("Assets/wall.png");
+                groundHeight.addAll(Arrays.asList(2000, 100, 100, 100, 150, 500, 100, 100, 100, 100, 100, 100, 100, 300, 400, 500, 100, 100, 100, 100, 100, 300, 300, 300, 500, 500, 500, 300, 300, 500, 600, 700, 200, 200, 200, 200, 2000));
                 break;
             }
             case 2: {
@@ -45,11 +46,10 @@ public class LevelManager {
                 enemies.add(new Robot(8000, 100, app));
                 enemies.add(new CEO(new PVector(500, 200), app));
                 background = app.loadImage("Assets/backgrond.png");
-                groundHeight.addAll(Arrays.asList(2000, 100, 100, 100, 150, 500, 100, 100, 100, 100, 100, 100, 100, 300, 400, 500, 100, 100, 100, 100, 100, 300, 300, 300, 500, 500, 500, 300, 700, 300, 100, 300, 500, 500, 500, 500, 2000));
+                groundHeight.addAll(Arrays.asList(2000,100, 100, 100, 10, 10, 10, 10, 400, 420,440, 460,400, 400, 400, 400, 400, 400, 200, 200, 200, 100, 100, 100, 700, 500, 500, 500, 500, 500, 500, 700, 800,600,550,500,450, 400, 350, 250,200, 200, 2000  ));
                 break;
             }
         }
-
 
         //background.resize(20000, 1080);
         this.player = player;
@@ -58,14 +58,12 @@ public class LevelManager {
             e.startLevel(this);
         }
 
-
         bounds = new ArrayList<>();
         for (int i = 0; i < groundHeight.size(); i++) {
             bounds.add(new Boundary(300 * i, app.displayHeight, 300 * i, app.displayHeight - groundHeight.get(i), app));
             bounds.add(new Boundary(300 * i, app.displayHeight - groundHeight.get(i), 300 * i + 300, app.displayHeight - groundHeight.get(i), app));
             bounds.add(new Boundary(300 * i + 300, app.displayHeight - groundHeight.get(i), 300 * i + 300, app.displayHeight, app));
         }
-
     }
 
     void update() {
@@ -89,7 +87,7 @@ public class LevelManager {
 
     public void hitCheck(Ray hitscanRay) {
 
-//        //Check if player bullet hits enemies
+        //Check if player bullet hits enemies
         ArrayList<Enemy> killed = new ArrayList<>();
         ArrayList<PVector> hit = new ArrayList<>();
 
@@ -142,19 +140,14 @@ public class LevelManager {
 
 
     void draw() {
-
             //app.image(background, 0, 0);
             for (Enemy e : enemies) {
                 e.draw();
             }
             app.fill(200);
             for (int i = 0; i < groundHeight.size(); i++) {
-                app.rect(i * 300, app.displayHeight - groundHeight.get(i), 300, 3000);
+                app.image(wall, i * 300, app.displayHeight - groundHeight.get(i));
             }
-            for (Boundary b : bounds) {
-                b.show();
-            }
-
     }
 
     void makeEnemy(Enemy e) {

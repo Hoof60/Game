@@ -97,6 +97,9 @@ public class Main extends PApplet {
                 boss.draw();
                 boss.killedCEO = true;
                 text("CEO retired" , displayWidth/2, displayHeight/2);
+                text("Press [ENTER] to take next contract" , displayWidth/2, displayHeight/2 + 200);
+                textSize(12);
+                text("You are contractually obliged to" , displayWidth/2, displayHeight/2+ 220);
                 levelBreakTimer--;
                 break;
             case Intro:
@@ -106,9 +109,9 @@ public class Main extends PApplet {
             case GameOver:
                 textSize(40);
                 text("GAME OVER", displayWidth / 4, displayHeight / 2);
+                text("Press [r] to invoice company for new player", displayWidth / 4, displayHeight / 2 + 200);
                 boss.playerDied();
                 boss.draw();
-                //text("FINAL SCORE : ", displayWidth / 4, (float) (displayHeight / 1.5));
                 break;
             case Running:
 //                boss.draw();
@@ -130,7 +133,7 @@ public class Main extends PApplet {
                     }
                     if (player.Reloading){
                         fill(200,20,0);
-                        rect(500, 20, 300 - player.reloadTimer*2, 50);
+                        rect(500, 20, 300 - player.reloadTimer*3, 50);
                         fill(0);
                         text("RELOADING", 555, 55);
                     } else if (player.bullets > i) {
@@ -180,8 +183,15 @@ public class Main extends PApplet {
         } else if (key == ENTER && state == gameState.MainMenu){
             state = gameState.Intro;
         } else if (key == ENTER && state == gameState.LevelEnd){
-            levelManager.Levelnum++;
             setup();
+            levelManager.Levelnum++;
+            boss.introDone = true;
+            boss.introTextNum = 11;
+            state = gameState.Running;
+        } else if (key == 'r' && state == gameState.GameOver){
+            setup();
+            boss.introDone = true;
+            boss.introTextNum = 11;
             state = gameState.Running;
         }
     }
@@ -217,9 +227,6 @@ public class Main extends PApplet {
             if (bullet != null) {
                 levelManager.hitCheck(bullet);
             }
-
-            //v = new PVector(mouseX - pos.x, (mouseY - pos.y) * 1.1f);
-            //bullets.add(new Bullet(pos, v, .011f, this));
         }
         if (state == gameState.Running & mouseButton == RIGHT) {
             player.aiming = true;

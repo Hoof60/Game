@@ -40,7 +40,7 @@ public class Laser extends Enemy {
     @Override
     boolean hitcheck(Character player) {
         if (player.ducking) {
-            if (position.x < player.position.x + 130 && position.x > player.position.x && position.y > player.position.y + 70 && position.y < player.position.y + player.height) {
+            if (position.x < player.position.x + 130 && position.x > player.position.x && position.y > player.position.y + 120 && position.y < player.position.y + player.height) {
                 return true;
             }
         } else if (position.x < player.position.x + 100 && position.x > player.position.x && position.y > player.position.y && position.y < player.position.y + player.height) {
@@ -54,6 +54,7 @@ public class Laser extends Enemy {
     }
 
     void draw() {
+        app.noStroke();
         app.fill(255, 0, 0);
         app.rect(position.x, position.y, 20, 5);
     }
